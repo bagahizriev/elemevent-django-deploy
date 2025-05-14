@@ -64,6 +64,12 @@ class EventStatus(models.TextChoices):
     STOP = 'STOP', 'Приостановлено'
     CANCEL = 'CANCEL', 'Отменено'
 
+class TicketSystemType(models.TextChoices):
+    """Типы билетных систем"""
+    DIRECT = 'DIRECT', 'Прямая ссылка'
+    TICKETSCLOUD = 'TICKETSCLOUD', 'TicketsCloud'
+    RADARIO = 'RADARIO', 'Radario'
+
 class Event(models.Model):
     """Модель мероприятия"""
     ARCHIVE_DELAY_CHOICES = [
@@ -96,7 +102,43 @@ class Event(models.Model):
     address = models.CharField(max_length=255, verbose_name="Адрес")
     age_restriction = models.ForeignKey(AgeRestriction, on_delete=models.PROTECT, null=True, verbose_name="Возрастное ограничение")
     description = models.TextField(blank=True, null=True, verbose_name="Описание")
-    ticket_link = models.URLField(max_length=255, verbose_name="Ссылка на билеты")
+    
+    # Новые поля для билетных систем
+    ticket_system = models.CharField(
+        max_length=20,
+        choices=TicketSystemType.choices,
+        default=TicketSystemType.DIRECT,
+        verbose_name="Система продажи билетов"
+    )
+    ticket_link = models.URLField(
+        max_length=255, 
+        blank=True, 
+        null=True,
+        verbose_name="Прямая ссылка на билеты",
+        help_text="Используется только при выборе типа 'Прямая ссылка'"
+    )
+    ticketscloud_event_id = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="ID события TicketsCloud",
+        help_text="Например: 6821dfc8b521c11bd5e8e245"
+    )
+    ticketscloud_token = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="Токен TicketsCloud",
+        help_text="Например: eyJhbGciOiJIUzI1NiIsImlzcyI6..."
+    )
+    radario_key = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="ID события Radario",
+        help_text="Введите только цифровой ID события (например: 123456)"
+    )
+    
     vk_link = models.URLField(max_length=255, blank=True, null=True, verbose_name="Ссылка на встречу ВК")
     archive_delay = models.IntegerField(choices=ARCHIVE_DELAY_CHOICES, default=3, verbose_name="Время до архивирования (часов)")
     slug = models.SlugField(max_length=255, unique=True, verbose_name="URL")

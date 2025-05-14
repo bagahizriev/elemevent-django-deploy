@@ -97,10 +97,13 @@ class AgeRestrictionAdmin(admin.ModelAdmin):
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     class Media:
-        js = ('admin/js/slug_warning.js',)
+        js = (
+            'admin/js/slug_warning.js',
+            'admin/js/ticket_system_fields.js',  # Добавим новый файл для управления видимостью полей
+        )
 
-    list_display = ['preview_poster_small', 'title', 'city', 'date', 'venue', 'get_colored_status', 'get_section']
-    list_filter = ['status', 'city', 'date', 'event_type', 'age_restriction']
+    list_display = ['preview_poster_small', 'title', 'city', 'date', 'venue', 'get_colored_status', 'get_section', 'get_ticket_system']
+    list_filter = ['status', 'city', 'date', 'event_type', 'age_restriction', 'ticket_system']
     search_fields = ['title', 'venue', 'description', 'city__name']
     autocomplete_fields = ['city', 'event_type', 'age_restriction']
     prepopulated_fields = {}  # Отключаем автоматическое заполнение slug
@@ -146,9 +149,19 @@ class EventAdmin(admin.ModelAdmin):
             'classes': ('wide',),
             'description': 'Указывайте время в часовом поясе города проведения'
         }),
-        ('Ссылки', {
+        ('Билетная система', {
             'fields': (
-                ('ticket_link', 'vk_link'),
+                'ticket_system',
+                'ticket_link',
+                ('ticketscloud_event_id', 'ticketscloud_token'),
+                'radario_key',
+            ),
+            'classes': ('wide',),
+            'description': 'Выберите тип билетной системы и заполните соответствующие поля'
+        }),
+        ('Дополнительные ссылки', {
+            'fields': (
+                'vk_link',
             ),
             'classes': ('wide',),
         }),
@@ -300,3 +313,8 @@ class EventAdmin(admin.ModelAdmin):
         status_name = status_names.get(obj.status, obj.status)
         return format_html('<span style="color: {}">{}</span>', color, status_name)
     get_colored_status.short_description = 'Статус'
+
+    def get_ticket_system(self, obj):
+        """Отображает тип билетной системы в списке"""
+        return obj.get_ticket_system_display()
+    get_ticket_system.short_description = 'Билетная система'

@@ -1,5 +1,9 @@
-{% extends 'base.html' %} {% block title %}{{ event.title }}, {{ event.city }}, {{ event.date|date:"j E Y"|lower }}, «{{ event.venue }}»{% if is_archive %} (Архивное мероприятие){% elif is_stopped %} (Перенесено){% elif is_cancelled %} (Отменено){% endif %}{% endblock %} {% block content %}
-<div class="container mx-auto">
+{% extends 'base.html' %} {% load static %} {% block title %}{{ event.title }}, {{ event.city }}, {{ event.date|date:"j E Y"|lower }}, «{{ event.venue }}»{% if is_archive %} (Архивное мероприятие){% elif is_stopped %} (Перенесено){% elif is_cancelled %} (Отменено){% endif %}{% endblock %} {% block head_scripts %} {% if event.ticket_system == 'TICKETSCLOUD' %}
+<script src="https://ticketscloud.com/static/scripts/widget/tcwidget.js"></script>
+{% elif event.ticket_system == 'RADARIO' %}
+<script src="https://radario.ru/frontend/src/api/openapi/openapi.js"></script>
+{% endif %} {% endblock %} {% block content %}
+<div class="container mx-auto" data-tilda-project-id="1">
 	<div class="cover-container mb-8">
 		<img src="{{ event.cover.url }}" class="cover-image" alt="{{ event.title }}" />
 	</div>
@@ -7,24 +11,8 @@
 	<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 		<div class="lg:col-span-2">
 			<h1 class="h1 mb-6">{{ event.title }}</h1>
-
-			<!-- Кнопки для md экранов, отображаются под заголовком -->
-			<div class="flex flex-row gap-2 mb-6 lg:hidden">
-				{% if is_archive %}
-				<div class="event-status">Мероприятие состоялось</div>
-				{% elif is_stopped %}
-				<div class="event-status">Продажа билетов временно приостановлена</div>
-				{% elif is_cancelled %}
-				<div class="event-status">Мероприятие отменено</div>
-				{% else %} {% if event.vk_link %}
-				<a href="{{ event.vk_link }}" target="_blank" class="block w-full btn btn-secondary">Встреча ВК</a>
-				{% endif %} {% if event.ticket_link %}
-				<a href="{{ event.ticket_link }}" class="block w-full btn btn-primary ticket-button">Купить билеты</a>
-				{% endif %} {% endif %}
-			</div>
-
+			{% include 'events/components/event_buttons-mobile.html' %}
 			<div class="prose prose-invert max-w-[608px] mb-8" style="white-space: pre-wrap">{% if event.description %}{{ event.description|linebreaks }}{% endif %}</div>
-
 			<div class="space-y-2">
 				{% if event.event_type %}
 				<div class="flex items-center gap-2 text-muted-foreground">
@@ -34,14 +22,12 @@
 					<span>{{ event.event_type }}</span>
 				</div>
 				{% endif %}
-
 				<div class="flex items-center gap-2 text-muted-foreground">
 					<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M10 9.99996C10.4584 9.99996 10.8507 9.83676 11.1771 9.51038C11.5035 9.18399 11.6667 8.79163 11.6667 8.33329C11.6667 7.87496 11.5035 7.4826 11.1771 7.15621C10.8507 6.82982 10.4584 6.66663 10 6.66663C9.54171 6.66663 9.14935 6.82982 8.82296 7.15621C8.49657 7.4826 8.33337 7.87496 8.33337 8.33329C8.33337 8.79163 8.49657 9.18399 8.82296 9.51038C9.14935 9.83676 9.54171 9.99996 10 9.99996ZM10 16.125C11.6945 14.5694 12.9514 13.1562 13.7709 11.8854C14.5903 10.6145 15 9.48607 15 8.49996C15 6.98607 14.5174 5.74649 13.5521 4.78121C12.5868 3.81593 11.4028 3.33329 10 3.33329C8.59726 3.33329 7.41323 3.81593 6.44796 4.78121C5.48268 5.74649 5.00004 6.98607 5.00004 8.49996C5.00004 9.48607 5.40976 10.6145 6.22921 11.8854C7.04865 13.1562 8.3056 14.5694 10 16.125ZM10 18.3333C7.76393 16.4305 6.09379 14.6632 4.98962 13.0312C3.88546 11.3993 3.33337 9.88885 3.33337 8.49996C3.33337 6.41663 4.00351 4.7569 5.34379 3.52079C6.68407 2.28468 8.23615 1.66663 10 1.66663C11.7639 1.66663 13.316 2.28468 14.6563 3.52079C15.9966 4.7569 16.6667 6.41663 16.6667 8.49996C16.6667 9.88885 16.1146 11.3993 15.0105 13.0312C13.9063 14.6632 12.2362 16.4305 10 18.3333Z" fill="currentColor" />
 					</svg>
 					<span>{{ event.city }}, «{{ event.venue }}»</span>
 				</div>
-
 				{% if event.address %}
 				<div class="flex items-center gap-2 text-muted-foreground">
 					<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -50,14 +36,12 @@
 					<span>{{ event.address }}</span>
 				</div>
 				{% endif %}
-
 				<div class="flex items-center gap-2 text-muted-foreground">
 					<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M4.16667 18.3333C3.70833 18.3333 3.31597 18.1701 2.98958 17.8437C2.66319 17.5173 2.5 17.125 2.5 16.6666V4.99996C2.5 4.54163 2.66319 4.14926 2.98958 3.82288C3.31597 3.49649 3.70833 3.33329 4.16667 3.33329H5V1.66663H6.66667V3.33329H13.3333V1.66663H15V3.33329H15.8333C16.2917 3.33329 16.684 3.49649 17.0104 3.82288C17.3368 4.14926 17.5 4.54163 17.5 4.99996V16.6666C17.5 17.125 17.3368 17.5173 17.0104 17.8437C16.684 18.1701 16.2917 18.3333 15.8333 18.3333H4.16667ZM4.16667 16.6666H15.8333V8.33329H4.16667V16.6666ZM4.16667 6.66663H15.8333V4.99996H4.16667V6.66663Z" fill="currentColor" />
 					</svg>
 					<span>{{ event.date|date:"j E Y"|lower }}, {{ event.time|time:"H:i" }}</span>
 				</div>
-
 				{% if event.age_restriction %}
 				<div class="flex items-center gap-2 text-muted-foreground">
 					<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -68,25 +52,8 @@
 				{% endif %}
 			</div>
 		</div>
-
-		<div>
-			<!-- Кнопки для больших экранов, отображаются в боковой колонке -->
-			<div class="flex flex-row gap-2 hidden lg:flex">
-				{% if is_archive %}
-				<div class="event-status">Мероприятие состоялось</div>
-				{% elif is_stopped %}
-				<div class="event-status">Продажа билетов временно приостановлена</div>
-				{% elif is_cancelled %}
-				<div class="event-status">Мероприятие отменено</div>
-				{% else %} {% if event.vk_link %}
-				<a href="{{ event.vk_link }}" target="_blank" class="block w-full btn btn-secondary">Встреча ВК</a>
-				{% endif %} {% if event.ticket_link %}
-				<a href="{{ event.ticket_link }}" class="block w-full btn btn-primary ticket-button">Купить билеты</a>
-				{% endif %} {% endif %}
-			</div>
-		</div>
+		<div>{% include 'events/components/event_buttons-desktop.html' %}</div>
 	</div>
-
 	{% if related_events %}
 	<section>
 		<h2 class="text-2xl font-bold mt-8 mb-8">Может быть интересно</h2>

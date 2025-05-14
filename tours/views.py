@@ -61,9 +61,18 @@ def tour_detail(request, slug):
     tour_events = []  # Предстоящие мероприятия
     past_tour_events = []  # Прошедшие мероприятия
     
+    # Флаги для проверки наличия виджетов
+    has_ticketscloud = False
+    has_radario = False
+    
     for event in all_tour_events:
         if not event.is_past():
             tour_events.append(event)
+            # Проверяем наличие виджетов
+            if event.ticket_system == 'TICKETSCLOUD' and event.ticketscloud_event_id and event.ticketscloud_token:
+                has_ticketscloud = True
+            elif event.ticket_system == 'RADARIO' and event.radario_key:
+                has_radario = True
         else:
             past_tour_events.append(event)
     
@@ -112,5 +121,7 @@ def tour_detail(request, slug):
         'upcoming_events': upcoming_events,
         'tours': tours,
         'questions': questions,
+        'has_ticketscloud': has_ticketscloud,
+        'has_radario': has_radario,
     }
     return render(request, 'tours/tour_detail.html', context)

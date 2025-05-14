@@ -119,12 +119,25 @@ function addUtmParamsToUrl(url) {
 	return urlObj.toString()
 }
 
-function addUtmToTicketButtons() {
-	// Находим только кнопки с классом ticket-button
-	const ticketButtons = document.querySelectorAll('.ticket-button')
+function getUtmParamsString() {
+	const utmParams = getRelevantUtmParams()
+	if (!utmParams) return ''
 
+	const params = new URLSearchParams()
+	Object.entries(utmParams).forEach(([key, value]) => {
+		params.set(key, value)
+	})
+
+	return params.toString()
+}
+
+function addUtmToTicketButtons() {
+	// Обрабатываем только прямые ссылки (DIRECT)
+	const ticketButtons = document.querySelectorAll('.ticket-button')
 	ticketButtons.forEach(button => {
-		const originalUrl = button.href
-		button.href = addUtmParamsToUrl(originalUrl)
+		if (button.href) {
+			const originalUrl = button.href
+			button.href = addUtmParamsToUrl(originalUrl)
+		}
 	})
 }

@@ -199,3 +199,11 @@ sudo service nginx restart
 3. Запускайте через gunicorn вместо `runserver`
 
 Это даст вам среду, максимально приближенную к продакшену, но на локальной машине.
+
+```
+python manage.py collectstatic
+```
+
+```
+gunicorn elemevent.wsgi:application --bind 127.0.0.1:8000 --workers 3 --reload
+```

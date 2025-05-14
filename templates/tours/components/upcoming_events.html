@@ -1,0 +1,27 @@
+{% if tour_events %}
+<div class="flex flex-col space-y-4">
+	{% for event in tour_events %}
+	<div class="event-container">
+		<div class="event-info">
+			<div class="event-column">
+				<div class="h2">{{ event.date|date:"d E Y" }}</div>
+			</div>
+			<div class="event-column-narrow">
+				<div class="h2">{{ event.city }}</div>
+				<div class="h3 text-muted-foreground">{{ event.venue }}</div>
+			</div>
+		</div>
+		<div class="event-buttons">
+			<a href="{% url 'event_detail' event.slug %}" class="btn btn-outline event-button">Подробнее</a>
+			{% if event.ticket_system == 'DIRECT' and event.ticket_link %}
+			<a href="{{ event.ticket_link }}" class="btn btn-primary event-button">Купить билет</a>
+			{% elif event.ticket_system == 'TICKETSCLOUD' and event.ticketscloud_event_id and event.ticketscloud_token %}
+			<a class="btn btn-primary event-button" href="#ticketscloud:event={{ event.ticketscloud_event_id }}&token={{ event.ticketscloud_token }}">Купить билет</a>
+			{% elif event.ticket_system == 'RADARIO' and event.radario_key %}
+			<a class="knopka btn btn-primary event-button" href="#event/{{ event.radario_key }}">Купить билет</a>
+			{% endif %}
+		</div>
+	</div>
+	{% endfor %}
+</div>
+{% endif %}
