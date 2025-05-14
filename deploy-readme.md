@@ -207,3 +207,7 @@ python manage.py collectstatic
 ```
 gunicorn elemevent.wsgi:application --bind 127.0.0.1:8000 --workers 3 --reload
 ```
+
+```
+gunicorn elemevent.wsgi:application --bind 0.0.0.0:8000 --workers 3 --reload
+```

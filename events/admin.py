@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Event, City, EventType, AgeRestriction, EventStatus
+from .models import Event, City, EventType, AgeRestriction, EventStatus, EventPush, EventAdvertising
 from django.contrib import messages
 from django.utils.text import slugify
 from django.core.files.base import ContentFile
@@ -94,6 +94,16 @@ class AgeRestrictionAdmin(admin.ModelAdmin):
         except ProtectedError as e:
             self.message_user(request, str(e.args[0]), messages.ERROR)
 
+class EventPushInline(admin.StackedInline):
+    model = EventPush
+    can_delete = True
+    extra = 0
+
+class EventAdvertisingInline(admin.StackedInline):
+    model = EventAdvertising
+    can_delete = True
+    extra = 0
+
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     class Media:
@@ -117,6 +127,7 @@ class EventAdmin(admin.ModelAdmin):
     date_hierarchy = 'date'
     list_per_page = 20
     actions = ['duplicate_event', 'make_active', 'make_draft', 'stop_events', 'cancel_events']
+    inlines = [EventPushInline, EventAdvertisingInline]
     
     fieldsets = (
         ('Управление видимостью', {
@@ -318,3 +329,10 @@ class EventAdmin(admin.ModelAdmin):
         """Отображает тип билетной системы в списке"""
         return obj.get_ticket_system_display()
     get_ticket_system.short_description = 'Билетная система'
+
+    def get_prepopulated_fields(self, request, obj=None):
+        # Если это создание нового объекта (obj=None), возвращаем prepopulated_fields
+        # Если это редактирование (obj!=None), возвращаем пустой словарь
+        if obj is None:
+            return {"slug": ("title",)}
+        return {}

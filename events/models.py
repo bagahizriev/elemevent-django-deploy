@@ -239,3 +239,35 @@ def delete_files_on_delete(sender, instance, **kwargs):
     if instance.cover:
         if os.path.isfile(instance.cover.path):
             os.remove(instance.cover.path)
+
+class EventPush(models.Model):
+    event = models.OneToOneField('Event', on_delete=models.CASCADE, related_name='push')
+    content = models.TextField(verbose_name='Содержимое пуша', help_text='Поддерживается HTML разметка')
+    is_active = models.BooleanField(default=True, verbose_name='Активен')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Пуш мероприятия'
+        verbose_name_plural = 'Пуши мероприятий'
+
+    def __str__(self):
+        return f'Пуш для {self.event}'
+
+class EventAdvertising(models.Model):
+    event = models.OneToOneField('Event', on_delete=models.CASCADE, related_name='advertising')
+    is_active = models.BooleanField(default=False, verbose_name='Активно')
+    token = models.CharField(max_length=100, verbose_name='ERID токен')
+    advertiser_name = models.CharField(max_length=255, verbose_name='Наименование рекламодателя')
+    advertiser_inn = models.CharField(max_length=12, verbose_name='ИНН рекламодателя')
+    advertiser_ogrn = models.CharField(max_length=15, verbose_name='ОГРН рекламодателя', blank=True, null=True)
+    additional_info = models.TextField(verbose_name='Дополнительная информация', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Рекламная информация'
+        verbose_name_plural = 'Рекламная информация'
+
+    def __str__(self):
+        return f'Реклама для {self.event}'

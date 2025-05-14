@@ -178,6 +178,11 @@ class TourAdmin(admin.ModelAdmin):
         return format_html('<span style="color: #dc3545;">Неактивно</span>')
     get_colored_status.short_description = 'Статус'
 
+    def get_prepopulated_fields(self, request, obj=None):
+        if obj is None:
+            return {"slug": ("title",)}
+        return {}
+
 @admin.register(TourEvent)
 class TourEventAdmin(admin.ModelAdmin):
     list_display = ['tour', 'event', 'created_at']

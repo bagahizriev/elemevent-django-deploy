@@ -1,15 +1,13 @@
 {% if tour_events %}
-<div class="flex flex-col space-y-4">
+<div class="flex flex-col">
 	{% for event in tour_events %}
 	<div class="event-container">
 		<div class="event-info">
-			<div class="event-column">
-				<div class="h2">{{ event.date|date:"d E Y" }}</div>
+			<div class="flex flex-col w-[300px] gap-2 text-left">
+				<h2 class="h3">{{ event.city }}</h2>
+				<h2 class="h3">{{ event.date|date:"d E Y" }}</h2>
 			</div>
-			<div class="event-column-narrow">
-				<div class="h2">{{ event.city }}</div>
-				<div class="h3 text-muted-foreground">{{ event.venue }}</div>
-			</div>
+			<h2 class="h3">{{ event.venue }}</h2>
 		</div>
 		<div class="event-buttons">
 			<a href="{% url 'event_detail' event.slug %}" class="btn btn-outline event-button">Подробнее</a>

@@ -31,11 +31,11 @@
 	}
 
 	body {
-		@apply bg-background text-foreground min-w-[360px];
+		@apply bg-background text-sm md:text-base text-foreground min-w-[360px];
 	}
 
 	.h1 {
-		@apply text-2xl font-bold md:text-3xl;
+		@apply text-3xl font-bold md:text-4xl;
 	}
 
 	.h2 {
@@ -43,7 +43,7 @@
 	}
 
 	.h3 {
-		@apply text-base font-bold;
+		@apply text-base font-bold md:text-lg;
 	}
 }
 
@@ -52,19 +52,11 @@
 	/*  */
 
 	.event-container {
-		@apply flex p-4 flex-col rounded-[16px] bg-primary-foreground lg:flex-row justify-between align-middle gap-4 lg:gap-0 text-center lg:text-left w-full;
+		@apply flex items-center align-middle border-b border-border py-6 flex-row justify-between text-center  w-full;
 	}
 
 	.event-info {
-		@apply flex align-middle flex-col space-x-4 w-full lg:w-1/2 md:flex-row;
-	}
-
-	.event-column {
-		@apply flex flex-col gap-1 w-full lg:w-1/3 items-center lg:items-start;
-	}
-
-	.event-column-narrow {
-		@apply flex flex-col gap-1 w-full lg:w-1/5 items-center lg:items-start;
+		@apply flex items-center align-middle flex-col space-x-4 w-full lg:w-1/2 md:flex-row;
 	}
 
 	.event-buttons {
@@ -75,16 +67,12 @@
 		@apply w-full lg:w-auto;
 	}
 
-	.event-past {
-		@apply opacity-50;
-	}
-
 	.event-status-tag {
 		@apply inline-flex items-center justify-center rounded-full bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-600;
 	}
 
 	.event-empty-card {
-		@apply bg-card p-6 rounded-[16px] border border-border text-foreground;
+		@apply bg-none p-6 rounded-[16px] border border-border text-foreground;
 	}
 
 	.event-title {
@@ -101,10 +89,6 @@
 
 	.event-weekday {
 		@apply text-sm text-muted-foreground;
-	}
-
-	.section-heading {
-		@apply h2 mt-12 mb-8 text-muted-foreground;
 	}
 
 	/*  */
@@ -135,7 +119,7 @@
 	}
 
 	.event-card-title {
-		@apply text-xl font-semibold;
+		@apply h2 font-semibold;
 	}
 
 	.event-card-info {
@@ -143,7 +127,7 @@
 	}
 
 	.event-card-info-text {
-		@apply text-xs text-muted-foreground;
+		@apply text-muted-foreground;
 	}
 
 	.event-button-container {
@@ -176,7 +160,7 @@
 	}
 
 	.tour-card-title {
-		@apply text-xl font-bold;
+		@apply h2 font-bold;
 	}
 
 	/* Обложки */
@@ -196,7 +180,7 @@
 	/* Кнопки */
 
 	.btn {
-		@apply text-center leading-normal font-bold py-3 px-4 rounded-[12px] transition-all text-nowrap text-base;
+		@apply text-center leading-normal font-bold py-3 px-4 rounded-[12px] transition-all text-nowrap text-sm md:text-base;
 	}
 
 	.btn-primary {
@@ -204,7 +188,7 @@
 	}
 
 	.btn-outline {
-		@apply bg-background text-foreground border border-border lg:hover:border-primary-foreground lg:hover:bg-primary-foreground;
+		@apply bg-none text-foreground border border-border lg:hover:border-border lg:hover:bg-border;
 	}
 
 	.btn-outline.active {
